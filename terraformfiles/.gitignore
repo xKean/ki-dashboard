@@ -1,0 +1,5 @@
+*.production.tf
+/os-trusted-cas
+.terraform/*
+/.terraform.lock.hcl
+/terraform.tf*
