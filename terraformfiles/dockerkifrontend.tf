@@ -87,6 +87,26 @@ resource "openstack_networking_secgroup_rule_v2" "terraform-secgroup-rule-http" 
   security_group_id = openstack_networking_secgroup_v2.terraform-secgroup.id
 }
 
+resource "openstack_networking_secgroup_rule_v2" "terraform-secgroup-rule-http" {
+  direction         = "ingress"
+  ethertype         = "IPv4"
+  protocol          = "tcp"
+  port_range_min    = 443
+  port_range_max    = 443
+  #remote_ip_prefix  = "0.0.0.0/0"
+  security_group_id = openstack_networking_secgroup_v2.terraform-secgroup.id
+}
+
+resource "openstack_networking_secgroup_rule_v2" "terraform-secgroup-rule-http" {
+  direction         = "ingress"
+  ethertype         = "IPv4"
+  protocol          = "tcp"
+  port_range_min    = 3000
+  port_range_max    = 3000
+  #remote_ip_prefix  = "0.0.0.0/0"
+  security_group_id = openstack_networking_secgroup_v2.terraform-secgroup.id
+}
+
 resource "openstack_networking_secgroup_rule_v2" "terraform-secgroup-rule-ssh" {
   direction         = "ingress"
   ethertype         = "IPv4"
@@ -173,7 +193,7 @@ resource "openstack_compute_instance_v2" "terraform-docker-instance-1" {
     systemctl enable docker.service
     systemctl enable containerd.service
     # start an example container
-    docker run --restart unless-stopped --name ki-frontend -d -p 80:3000 xkeana/ki-frontend
+    docker run --restart unless-stopped --name ki-frontend -d -p 3000:3000 xkeana/ki-frontend
     # see, https://hub.docker.com/_/nginx, also for docker-compose example etc.
   EOF
 }
