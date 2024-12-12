@@ -14,7 +14,7 @@ variable "group_number" {
 locals {
   auth_url      = "https://private-cloud.informatik.hs-fulda.de:5000/v3"
   user_name     = "CloudServ${var.group_number}"
-  user_password = "Password :)"
+  user_password = "PeMaJa2024!"
   tenant_name   = "CloudServ${var.group_number}"
   cacert_file   = "./os-trusted-cas"
   region_name   = "RegionOne"
@@ -173,7 +173,7 @@ resource "openstack_compute_instance_v2" "terraform-docker-instance-1" {
     systemctl enable docker.service
     systemctl enable containerd.service
     # start an example container
-    docker run --restart unless-stopped --name nginx -d -p 80:80 nginx
+    docker run --restart unless-stopped --name ki-frontend -d -p 80:3000 xkeana/ki-frontend
     # see, https://hub.docker.com/_/nginx, also for docker-compose example etc.
   EOF
 }
