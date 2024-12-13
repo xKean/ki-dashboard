@@ -1,5 +1,13 @@
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
+Der Docker Container ist mit
+
+```bash
+docker buildx build --platform linux/amd64,linux/arm64/v8 -t xkeana/ki-frontend --push .
+```
+
+zu bauen!
+
 ## Getting Started
 
 First, run the development server:

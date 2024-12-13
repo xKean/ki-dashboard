@@ -87,7 +87,7 @@ resource "openstack_networking_secgroup_rule_v2" "terraform-secgroup-rule-http" 
   security_group_id = openstack_networking_secgroup_v2.terraform-secgroup.id
 }
 
-resource "openstack_networking_secgroup_rule_v2" "terraform-secgroup-rule-http" {
+resource "openstack_networking_secgroup_rule_v2" "terraform-secgroup-rule-https" {
   direction         = "ingress"
   ethertype         = "IPv4"
   protocol          = "tcp"
@@ -97,7 +97,7 @@ resource "openstack_networking_secgroup_rule_v2" "terraform-secgroup-rule-http" 
   security_group_id = openstack_networking_secgroup_v2.terraform-secgroup.id
 }
 
-resource "openstack_networking_secgroup_rule_v2" "terraform-secgroup-rule-http" {
+resource "openstack_networking_secgroup_rule_v2" "terraform-secgroup-rule-dreitausend" {
   direction         = "ingress"
   ethertype         = "IPv4"
   protocol          = "tcp"
