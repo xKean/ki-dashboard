@@ -1,0 +1,6 @@
+@ki_backend_HostAddress = http://localhost:5179
+
+GET {{ki_backend_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
