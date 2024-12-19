@@ -190,6 +190,51 @@ resource "openstack_compute_instance_v2" "terraform-docker-instance-1" {
 }
 
 
+resource "openstack_compute_instance_v2" "terraform-docker-instance-2" {
+  name              = "my-terraform-docker-instance-2"
+  image_name        = local.image_name
+  flavor_name       = local.flavor_name
+  key_pair          = openstack_compute_keypair_v2.terraform-keypair.name
+  security_groups   = [openstack_networking_secgroup_v2.terraform-secgroup.name]
+
+  depends_on = [openstack_networking_subnet_v2.terraform-subnet-1]
+
+  network {
+    uuid = openstack_networking_network_v2.terraform-network-1.id
+  }
+
+  user_data = <<-EOF
+    #!/bin/bash
+    apt-get update
+    # see: https://docs.docker.com/engine/install/ubuntu/
+    # also running the convenience script from https://get.docker.com/ or
+    # https://github.com/docker/docker-install is possible, but risky
+    apt-get install -y ca-certificates curl
+    # install docker gpg key
+    install -m 0755 -d /etc/apt/keyrings
+    curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
+    chmod a+r /etc/apt/keyrings/docker.asc
+    # add the repository to apt sources:
+    echo \
+      "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu \
+      $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | \
+    tee /etc/apt/sources.list.d/docker.list > /dev/null
+    apt-get update
+    # install docker
+    apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+    # post install
+    #groupadd docker # already installed by package normally
+    usermod -aG docker ubuntu # add default cloud image user to docker group
+    # autostart docker on reboot
+    systemctl enable docker.service
+    systemctl enable containerd.service
+    # start an example container
+    docker run --restart unless-stopped --name ki-backend -d -p 80:80 -p 443:443 xkeana/ki-backend
+    # see, https://hub.docker.com/_/nginx, also for docker-compose example etc.
+  EOF
+}
+
+
 
 ###########################################################################
 #
@@ -207,4 +252,21 @@ resource "openstack_networking_floatingip_v2" "fip_1" {
 
 output "docker_vip_addr" {
   value = openstack_networking_floatingip_v2.fip_1
+}
+
+
+
+data "openstack_networking_port_v2" "port-2" {
+  fixed_ip = openstack_compute_instance_v2.terraform-docker-instance-2.access_ip_v4
+}
+
+
+resource "openstack_networking_floatingip_v2" "fip_2" {
+  pool    = local.pubnet_name
+  port_id = data.openstack_networking_port_v2.port-2.id
+}
+
+
+output "docker_vip_addr_2" {
+  value = openstack_networking_floatingip_v2.fip_2
 }
